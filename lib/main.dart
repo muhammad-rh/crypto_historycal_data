@@ -41,9 +41,8 @@ void main() async {
       ),
       home: BlocProvider(
         create: (_) => HistorycalBloc(HistorycalDatasource())
-          ..add(
-            ConnectHistorycalWebSocket(),
-          ),
+          ..add(ConnectHistorycalWebSocket())
+          ..add(SubscribeToHistorycalWebSocket()),
         child: Builder(builder: (context) {
           return const HistorycalPage();
         }),

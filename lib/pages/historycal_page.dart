@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:code_challenge/bloc/historycal_bloc.dart';
 import 'package:code_challenge/config/app_formats.dart';
 import 'package:code_challenge/datasources/watchlist_datasource.dart';
@@ -13,7 +15,45 @@ class HistorycalPage extends StatefulWidget {
   State<HistorycalPage> createState() => _HistorycalPageState();
 }
 
-class _HistorycalPageState extends State<HistorycalPage> {
+class _HistorycalPageState extends State<HistorycalPage>
+    with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    setState(() {
+      state == AppLifecycleState.resumed
+          ? context.read<HistorycalBloc>().add(SubscribeToHistorycalWebSocket())
+          : context
+              .read<HistorycalBloc>()
+              .add(UnsubscribeToHistorycalWebSocket());
+
+      if (state == AppLifecycleState.resumed) {
+        log("///Resumed///");
+      } else if (state == AppLifecycleState.inactive) {
+        log("///Inactive///");
+      } else if (state == AppLifecycleState.paused) {
+        log("///Paused///");
+      } else if (state == AppLifecycleState.detached) {
+        log("///Detached///");
+      } else if (state == AppLifecycleState.hidden) {
+        log("///Hidden///");
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    WidgetsBinding.instance.removeObserver(this);
+  }
+
   @override
   Widget build(BuildContext context) {
     var historycalBloc = context.watch<HistorycalBloc>();
@@ -29,9 +69,11 @@ class _HistorycalPageState extends State<HistorycalPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          context.read<HistorycalBloc>().add(SubscribeToHistorycalWebSocket());
+          context
+              .read<HistorycalBloc>()
+              .add(UnsubscribeToHistorycalWebSocket());
         },
-        child: const Icon(Icons.send),
+        child: const Icon(Icons.pause),
       ),
     );
   }

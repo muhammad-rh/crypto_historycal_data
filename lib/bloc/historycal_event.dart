@@ -11,6 +11,8 @@ class ConnectHistorycalWebSocket extends HistorycalEvent {}
 
 class SubscribeToHistorycalWebSocket extends HistorycalEvent {}
 
+class UnsubscribeToHistorycalWebSocket extends HistorycalEvent {}
+
 class ReceiveMessageHistorycalWebSocket extends HistorycalEvent {
   final String message;
   const ReceiveMessageHistorycalWebSocket(this.message);

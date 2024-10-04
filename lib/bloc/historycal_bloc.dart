@@ -21,6 +21,7 @@ class HistorycalBloc extends Bloc<HistorycalEvent, HistorycalState> {
     });
     on<ConnectHistorycalWebSocket>(_connectHistorycalWebSocket);
     on<SubscribeToHistorycalWebSocket>(_subscribeToHistorycalWebSocket);
+    on<UnsubscribeToHistorycalWebSocket>(_unsubscribeToHistorycalWebSocket);
     on<ReceiveMessageHistorycalWebSocket>(_receiveMessageHistorycalWebSocket);
   }
 
@@ -38,9 +39,17 @@ class HistorycalBloc extends Bloc<HistorycalEvent, HistorycalState> {
     add(ConnectHistorycalWebSocket());
 
     _dataSource.sendMessage(
-      '{"action": "${_isSubscribe ? "unsubscribe" : "subscribe"}", "symbols": "ETH-USD,BTC-USD"}',
+      '{"action": "subscribe", "symbols": "ETH-USD,BTC-USD"}',
     );
-    _isSubscribe = !_isSubscribe;
+    _isSubscribe = true;
+  }
+
+  void _unsubscribeToHistorycalWebSocket(
+      UnsubscribeToHistorycalWebSocket event, Emitter<HistorycalState> emit) {
+    _dataSource.sendMessage(
+      '{"action": "unsubscribe", "symbols": "ETH-USD,BTC-USD"}',
+    );
+    _isSubscribe = false;
   }
 
   ChartSeriesController? chartSeriesController;
