@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:code_challenge/bloc/historycal_bloc.dart';
+import 'package:code_challenge/config/app_assets.dart';
 import 'package:code_challenge/config/app_colors.dart';
 import 'package:code_challenge/config/app_formats.dart';
 import 'package:code_challenge/datasources/watchlist_datasource.dart';
@@ -70,173 +71,225 @@ class _HistorycalPageState extends State<HistorycalPage>
     var historycalBloc = context.watch<HistorycalBloc>();
 
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            ...componentCarting(historycalBloc),
-            const SizedBox(height: 16),
-            watchlist(historycalBloc),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          context
-              .read<HistorycalBloc>()
-              .add(UnsubscribeToHistorycalWebSocket());
-        },
-        child: const Icon(Icons.pause),
-      ),
+      body: historycalBloc.historycalData.isEmpty
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : SafeArea(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _headerBuild(historycalBloc),
+                  _cartingBuild(historycalBloc),
+                  Expanded(child: _watchlistBuild(historycalBloc))
+                ],
+              ),
+            ),
     );
   }
 
-  List<Widget> componentCarting(HistorycalBloc historycalBloc) {
-    var data = historycalBloc.historycalData[historycalBloc.getSelectedKey];
-
-    return [
-      Wrap(
+  Widget _headerBuild(HistorycalBloc historycalBloc) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ...historycalBloc.historycalData.entries.map((e) {
-            return Column(
-              children: [
-                InkWell(
-                  onTap: () {
-                    historycalBloc.selectedKey = e.key;
-                  },
+          Row(
+            children: [
+              Image.asset(
+                AppAssets.appLogo,
+                width: 36,
+                height: 36,
+              ),
+              const SizedBox(width: 8),
+              const Text(
+                'NexGen Crypto',
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          const Text(
+            'Analytics',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Wrap(
+            children: [
+              ...historycalBloc.historycalData.entries.map((e) {
+                return InkWell(
+                  onTap: e.key == historycalBloc.getSelectedKey
+                      ? null
+                      : () {
+                          historycalBloc.selectedKey = e.key;
+                        },
                   child: Container(
                     padding: const EdgeInsets.symmetric(
                       vertical: 4,
                       horizontal: 8,
                     ),
                     margin: const EdgeInsets.all(4),
-                    color: Colors.orange,
-                    child: Text(
-                      e.key,
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
-              ],
-            );
-          }).toList(),
-        ],
-      ),
-      if (historycalBloc.getSelectedKey != '') ...[
-        Container(
-          decoration: BoxDecoration(
-            color: AppColors.black700,
-            borderRadius: BorderRadius.circular(15),
-          ),
-          padding: const EdgeInsets.all(12),
-          margin: const EdgeInsets.all(12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                historycalBloc.getSelectedKey,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 12,
-                  color: AppColors.grey,
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    '\$ ${AppFormats.commaFormat(data!.last.p)}',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: AppFormats.upDownColorFormat(data.last.dc),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    padding: const EdgeInsets.fromLTRB(0, 1, 6, 1),
-                    child: Flex(
-                      direction: Axis.horizontal,
+                    color: e.key == historycalBloc.getSelectedKey
+                        ? AppColors.orange
+                        : AppColors.black500,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
-                          AppFormats.isNeg(data.last.dc)
-                              ? Icons.arrow_drop_down
-                              : Icons.arrow_drop_up,
-                          color: AppColors.white,
-                          size: 24,
+                        Image.asset(
+                          AppFormats.iconCrypto(e.key),
+                          height: 24,
+                          width: 24,
                         ),
+                        const SizedBox(width: 4),
                         Text(
-                          '${data.last.dc} %',
+                          e.key,
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: AppColors.white,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],
                     ),
                   ),
-                ],
-              ),
-              Text(
-                AppFormats.addPlusSign(AppFormats.commaFormat(data.last.dd)),
-                style: TextStyle(
-                  color: AppFormats.upDownColorFormat(data.last.dd),
-                ),
-              ),
-              const SizedBox(height: 16),
-              SfCartesianChart(
-                margin: const EdgeInsets.all(0),
-                trackballBehavior: _trackballBehavior,
-                primaryXAxis: CategoryAxis(
-                  axisLine: const AxisLine(width: 0),
-                  majorGridLines: const MajorGridLines(width: 0),
-                  labelStyle: const TextStyle(
-                    color: AppColors.grey,
-                    fontSize: 12,
-                  ),
-                ),
-                primaryYAxis: NumericAxis(
-                  axisLine: const AxisLine(width: 0.5),
-                  majorGridLines: const MajorGridLines(width: 0.1),
-                  labelStyle: const TextStyle(
-                    color: AppColors.grey,
-                    fontSize: 12,
-                  ),
-                ),
-                series: [
-                  AreaSeries<HistorycalModel, String>(
-                    onRendererCreated: (ChartSeriesController controller) {
-                      historycalBloc.chartSeriesController = controller;
-                    },
-                    dataSource: data,
-                    xValueMapper: (HistorycalModel data, int index) =>
-                        AppFormats.minuteFormat.format(data.t),
-                    yValueMapper: (HistorycalModel data, _) =>
-                        double.parse(data.p),
-                    borderColor: AppColors.primary300,
-                    borderWidth: 2,
-                    color: AppColors.primary500,
-                    gradient: const LinearGradient(
-                      colors: [
-                        AppColors.primary1000,
-                        AppColors.primary300,
-                        AppColors.primary500,
-                      ],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                    ),
-                  ),
-                ],
-              ),
+                );
+              }).toList(),
             ],
           ),
-        ),
-      ],
-    ];
+        ],
+      ),
+    );
   }
 
-  BlocBuilder<HistorycalBloc, HistorycalState> watchlist(
+  Widget _cartingBuild(HistorycalBloc historycalBloc) {
+    var data = historycalBloc.historycalData[historycalBloc.getSelectedKey];
+
+    if (historycalBloc.getSelectedKey != '') {
+      return Container(
+        decoration: BoxDecoration(
+          color: AppColors.black700,
+          borderRadius: BorderRadius.circular(15),
+        ),
+        padding: const EdgeInsets.all(12),
+        margin: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Image.asset(
+                  AppFormats.iconCrypto(historycalBloc.getSelectedKey),
+                  height: 16,
+                  width: 16,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  historycalBloc.getSelectedKey,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                    color: AppColors.grey,
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  '\$ ${AppFormats.commaFormat(data!.last.p)}',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    color: AppFormats.upDownColorFormat(data.last.dc),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  padding: const EdgeInsets.fromLTRB(0, 1, 6, 1),
+                  child: Flex(
+                    direction: Axis.horizontal,
+                    children: [
+                      Icon(
+                        AppFormats.isNeg(data.last.dc)
+                            ? Icons.arrow_drop_down
+                            : Icons.arrow_drop_up,
+                        color: AppColors.white,
+                        size: 24,
+                      ),
+                      Text(
+                        '${data.last.dc} %',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            Text(
+              AppFormats.addPlusSign(AppFormats.commaFormat(data.last.dd)),
+              style: TextStyle(
+                color: AppFormats.upDownColorFormat(data.last.dd),
+              ),
+            ),
+            const SizedBox(height: 16),
+            SfCartesianChart(
+              margin: const EdgeInsets.all(0),
+              trackballBehavior: _trackballBehavior,
+              primaryXAxis: CategoryAxis(
+                axisLine: const AxisLine(width: 0),
+                majorGridLines: const MajorGridLines(width: 0),
+                labelStyle: const TextStyle(
+                  color: AppColors.grey,
+                  fontSize: 12,
+                ),
+              ),
+              primaryYAxis: NumericAxis(
+                axisLine: const AxisLine(width: 0.5),
+                majorGridLines: const MajorGridLines(width: 0.1),
+                labelStyle: const TextStyle(
+                  color: AppColors.grey,
+                  fontSize: 12,
+                ),
+                axisLabelFormatter: (args) {
+                  // Format label untuk sumbu Y
+                  return ChartAxisLabel(
+                      AppFormats.commaFormat(args.value.toString()), null);
+                },
+              ),
+              series: [
+                AreaSeries<HistorycalModel, String>(
+                  onRendererCreated: (ChartSeriesController controller) {
+                    historycalBloc.chartSeriesController = controller;
+                  },
+                  dataSource: data,
+                  xValueMapper: (HistorycalModel data, int index) =>
+                      AppFormats.minuteFormat.format(data.t),
+                  yValueMapper: (HistorycalModel data, _) =>
+                      double.parse(data.p),
+                  borderColor: AppColors.primary300,
+                  borderWidth: 2,
+                  color: AppColors.primary500,
+                ),
+              ],
+            )
+          ],
+        ),
+      );
+    } else {
+      return const Center(child: Text('No data yet.'));
+    }
+  }
+
+  BlocBuilder<HistorycalBloc, HistorycalState> _watchlistBuild(
       HistorycalBloc historycalBloc) {
     return BlocBuilder<HistorycalBloc, HistorycalState>(
       builder: (_, state) {
@@ -246,28 +299,55 @@ class _HistorycalPageState extends State<HistorycalPage>
                   .map((e) => e.value.last)
                   .toList());
 
-          return Column(
-            children: [
-              SfDataGrid(
-                source: data,
-                columns: [
-                  for (int i = 0; i < 4; i++)
-                    GridColumn(
-                      columnName: ['Symbol', 'Last', 'Chg', 'Chg%'][i],
-                      label: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        alignment: i == 0
-                            ? Alignment.centerLeft
-                            : Alignment.centerRight,
-                        child: Text(
-                          ['Symbol', 'Last', 'Chg', 'Chg%'][i],
-                          overflow: TextOverflow.ellipsis,
+          return Container(
+            decoration: const BoxDecoration(
+              color: AppColors.black700,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(15),
+                topRight: Radius.circular(15),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(12, 12, 12, 0),
+                  child: Text(
+                    'Watchlist',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                SfDataGrid(
+                  source: data,
+                  headerRowHeight: 36,
+                  rowHeight: 38,
+                  shrinkWrapRows: true,
+                  columns: [
+                    for (int i = 0; i < 4; i++)
+                      GridColumn(
+                        columnName: ['Symbol', 'Last', 'Chg', 'Chg%'][i],
+                        label: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          alignment: i == 0
+                              ? Alignment.centerLeft
+                              : Alignment.centerRight,
+                          child: Text(
+                            ['Symbol', 'Last', 'Chg', 'Chg%'][i],
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: AppColors.grey,
+                              fontSize: 13,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           );
         } else {
           return const Center(child: Text('No data yet.'));

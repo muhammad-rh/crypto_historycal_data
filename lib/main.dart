@@ -18,7 +18,7 @@ void main() async {
           primary: AppColors.primary300,
           secondary: AppColors.primary1000,
         ),
-        textTheme: GoogleFonts.latoTextTheme().apply(
+        textTheme: GoogleFonts.manropeTextTheme().apply(
           bodyColor: AppColors.white,
           displayColor: AppColors.white,
         ),

@@ -1,3 +1,4 @@
+import 'package:code_challenge/config/app_assets.dart';
 import 'package:code_challenge/config/app_colors.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
@@ -46,6 +47,17 @@ class AppFormats {
       return true;
     } else {
       return false;
+    }
+  }
+
+  static iconCrypto(String value) {
+    switch (value) {
+      case 'BTC-USD':
+        return AppAssets.btc;
+      case 'ETH-USD':
+        return AppAssets.eth;
+      default:
+        return AppAssets.crypto;
     }
   }
 }
