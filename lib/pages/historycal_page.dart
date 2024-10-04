@@ -6,6 +6,7 @@ import 'package:code_challenge/config/app_colors.dart';
 import 'package:code_challenge/config/app_formats.dart';
 import 'package:code_challenge/datasources/watchlist_datasource.dart';
 import 'package:code_challenge/models/historycal_model.dart';
+import 'package:code_challenge/widgets/historycal_skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
@@ -72,9 +73,7 @@ class _HistorycalPageState extends State<HistorycalPage>
 
     return Scaffold(
       body: historycalBloc.historycalData.isEmpty
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
+          ? const HistorycalSkeleton()
           : SafeArea(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,14 +126,17 @@ class _HistorycalPageState extends State<HistorycalPage>
                           historycalBloc.selectedKey = e.key;
                         },
                   child: Container(
+                    decoration: BoxDecoration(
+                      color: e.key == historycalBloc.getSelectedKey
+                          ? AppColors.orange
+                          : AppColors.black500,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
                     padding: const EdgeInsets.symmetric(
                       vertical: 4,
                       horizontal: 8,
                     ),
                     margin: const EdgeInsets.all(4),
-                    color: e.key == historycalBloc.getSelectedKey
-                        ? AppColors.orange
-                        : AppColors.black500,
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
