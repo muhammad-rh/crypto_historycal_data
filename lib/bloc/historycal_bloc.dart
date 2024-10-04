@@ -105,7 +105,7 @@ class HistorycalBloc extends Bloc<HistorycalEvent, HistorycalState> {
   ) {
     if (newData.s == '' || oldData.s == '') return null;
 
-    Duration diff = newData.dateTime.difference(oldData.dateTime);
+    Duration diff = newData.t.difference(oldData.t);
 
     if (diff.inSeconds >= 1) {
       // log('${oldData.p.toString()} | ${oldData.s}', name: 'oldData');

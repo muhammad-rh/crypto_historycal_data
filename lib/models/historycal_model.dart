@@ -1,3 +1,4 @@
+import 'package:code_challenge/config/app_formats.dart';
 import 'package:equatable/equatable.dart';
 
 class HistorycalModel extends Equatable {
@@ -8,7 +9,6 @@ class HistorycalModel extends Equatable {
     required this.dc,
     required this.dd,
     required this.t,
-    required this.dateTime,
   });
 
   final String s;
@@ -16,8 +16,7 @@ class HistorycalModel extends Equatable {
   final String q;
   final String dc;
   final String dd;
-  final int t;
-  final DateTime dateTime;
+  final DateTime t;
 
   factory HistorycalModel.fromJson(Map<String, dynamic> json) {
     return HistorycalModel(
@@ -26,8 +25,7 @@ class HistorycalModel extends Equatable {
       q: json["q"] ?? "",
       dc: json["dc"] ?? "",
       dd: json["dd"] ?? "",
-      t: json["t"] ?? 0,
-      dateTime: DateTime.now().toLocal(),
+      t: AppFormats.msFormat(ms: json["t"] ?? 0).toLocal(),
     );
   }
 
@@ -38,7 +36,6 @@ class HistorycalModel extends Equatable {
         "dc": dc,
         "dd": dd,
         "t": t,
-        "dateTime": dateTime,
       };
 
   @override

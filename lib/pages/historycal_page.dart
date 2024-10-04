@@ -121,7 +121,7 @@ class _HistorycalPageState extends State<HistorycalPage>
                   historycalBloc.historycalData[historycalBloc.getSelectedKey]!,
               xValueMapper: (HistorycalModel data, int index) =>
                   AppFormats.hourFormat.format(
-                AppFormats.msFormat(ms: data.t),
+                data.t,
               ),
               yValueMapper: (HistorycalModel data, _) => double.parse(data.p),
               markerSettings: const MarkerSettings(isVisible: false),
