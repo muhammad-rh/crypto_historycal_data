@@ -12,16 +12,19 @@ void main() async {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
-        primaryColor: AppColors.primary,
-        scaffoldBackgroundColor: Colors.white,
-        colorScheme: ColorScheme.light(
-          primary: AppColors.primary,
-          secondary: AppColors.secondary,
+        primaryColor: AppColors.primary300,
+        scaffoldBackgroundColor: AppColors.black900,
+        colorScheme: const ColorScheme.light(
+          primary: AppColors.primary300,
+          secondary: AppColors.primary1000,
         ),
-        textTheme: GoogleFonts.latoTextTheme(),
+        textTheme: GoogleFonts.latoTextTheme().apply(
+          bodyColor: AppColors.white,
+          displayColor: AppColors.white,
+        ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(AppColors.primary),
+            backgroundColor: MaterialStateProperty.all(AppColors.primary300),
             shape: MaterialStateProperty.all(
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),

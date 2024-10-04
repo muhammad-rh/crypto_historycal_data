@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:code_challenge/bloc/historycal_bloc.dart';
+import 'package:code_challenge/config/app_colors.dart';
 import 'package:code_challenge/config/app_formats.dart';
 import 'package:code_challenge/datasources/watchlist_datasource.dart';
 import 'package:code_challenge/models/historycal_model.dart';
@@ -17,10 +18,20 @@ class HistorycalPage extends StatefulWidget {
 
 class _HistorycalPageState extends State<HistorycalPage>
     with WidgetsBindingObserver {
+  late TrackballBehavior _trackballBehavior;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _trackballBehavior = TrackballBehavior(
+      // Enables the trackball
+      enable: true,
+      tooltipSettings: const InteractiveTooltip(
+        enable: true,
+        color: Colors.red,
+      ),
+    );
   }
 
   @override
@@ -59,13 +70,14 @@ class _HistorycalPageState extends State<HistorycalPage>
     var historycalBloc = context.watch<HistorycalBloc>();
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Crypto Historycal Data")),
-      body: Column(
-        children: [
-          ...componentCarting(historycalBloc),
-          const SizedBox(height: 16),
-          watchlist(historycalBloc),
-        ],
+      body: SafeArea(
+        child: Column(
+          children: [
+            ...componentCarting(historycalBloc),
+            const SizedBox(height: 16),
+            watchlist(historycalBloc),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -79,6 +91,8 @@ class _HistorycalPageState extends State<HistorycalPage>
   }
 
   List<Widget> componentCarting(HistorycalBloc historycalBloc) {
+    var data = historycalBloc.historycalData[historycalBloc.getSelectedKey];
+
     return [
       Wrap(
         children: [
@@ -108,32 +122,115 @@ class _HistorycalPageState extends State<HistorycalPage>
         ],
       ),
       if (historycalBloc.getSelectedKey != '') ...[
-        Text('Selected Key: ${historycalBloc.getSelectedKey}'),
-        SfCartesianChart(
-          primaryXAxis: CategoryAxis(),
-          series: [
-            SplineSeries<HistorycalModel, String>(
-              splineType: SplineType.monotonic,
-              onRendererCreated: (ChartSeriesController controller) {
-                historycalBloc.chartSeriesController = controller;
-              },
-              dataSource:
-                  historycalBloc.historycalData[historycalBloc.getSelectedKey]!,
-              xValueMapper: (HistorycalModel data, int index) =>
-                  AppFormats.hourFormat.format(
-                data.t,
-              ),
-              yValueMapper: (HistorycalModel data, _) => double.parse(data.p),
-              markerSettings: const MarkerSettings(isVisible: false),
-              dataLabelSettings: const DataLabelSettings(
-                textStyle: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 16,
+        Container(
+          decoration: BoxDecoration(
+            color: AppColors.black700,
+            borderRadius: BorderRadius.circular(15),
+          ),
+          padding: const EdgeInsets.all(12),
+          margin: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                historycalBloc.getSelectedKey,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 12,
+                  color: AppColors.grey,
                 ),
               ),
-            ),
-          ],
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    '\$ ${AppFormats.commaFormat(data!.last.p)}',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                    ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: AppFormats.upDownColorFormat(data.last.dc),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    padding: const EdgeInsets.fromLTRB(0, 1, 6, 1),
+                    child: Flex(
+                      direction: Axis.horizontal,
+                      children: [
+                        Icon(
+                          AppFormats.isNeg(data.last.dc)
+                              ? Icons.arrow_drop_down
+                              : Icons.arrow_drop_up,
+                          color: AppColors.white,
+                          size: 24,
+                        ),
+                        Text(
+                          '${data.last.dc} %',
+                          style: const TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              Text(
+                AppFormats.addPlusSign(AppFormats.commaFormat(data.last.dd)),
+                style: TextStyle(
+                  color: AppFormats.upDownColorFormat(data.last.dd),
+                ),
+              ),
+              const SizedBox(height: 16),
+              SfCartesianChart(
+                margin: const EdgeInsets.all(0),
+                trackballBehavior: _trackballBehavior,
+                primaryXAxis: CategoryAxis(
+                  axisLine: const AxisLine(width: 0),
+                  majorGridLines: const MajorGridLines(width: 0),
+                  labelStyle: const TextStyle(
+                    color: AppColors.grey,
+                    fontSize: 12,
+                  ),
+                ),
+                primaryYAxis: NumericAxis(
+                  axisLine: const AxisLine(width: 0.5),
+                  majorGridLines: const MajorGridLines(width: 0.1),
+                  labelStyle: const TextStyle(
+                    color: AppColors.grey,
+                    fontSize: 12,
+                  ),
+                ),
+                series: [
+                  AreaSeries<HistorycalModel, String>(
+                    onRendererCreated: (ChartSeriesController controller) {
+                      historycalBloc.chartSeriesController = controller;
+                    },
+                    dataSource: data,
+                    xValueMapper: (HistorycalModel data, int index) =>
+                        AppFormats.minuteFormat.format(data.t),
+                    yValueMapper: (HistorycalModel data, _) =>
+                        double.parse(data.p),
+                    borderColor: AppColors.primary300,
+                    borderWidth: 2,
+                    color: AppColors.primary500,
+                    gradient: const LinearGradient(
+                      colors: [
+                        AppColors.primary1000,
+                        AppColors.primary300,
+                        AppColors.primary500,
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ],
     ];
