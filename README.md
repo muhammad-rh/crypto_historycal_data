@@ -8,11 +8,14 @@
 ## `Link Download`
 
 - [Unduh APK NexGen Crypto](https://bit.ly/apk_nexgenCrypto)
-- Untuk Ios sedang proses upload, dikarenakan butuh update Xcode
 
 ## `Screenshoot`
 
+- **Android**
 ![screenshot](./assets/screenshoot/screenshot.png)
+
+- **Ios**
+![screenshot_ios](./assets/screenshoot/screenshot_ios.png)
 
 ## `Dependencies`
 
