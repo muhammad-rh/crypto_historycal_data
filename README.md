@@ -5,9 +5,10 @@
 - **Flutter**: 3.16.4
 - **JDK**: 19.0.2
 
-## `Link Download APK`
+## `Link Download`
 
 - [Unduh APK NexGen Crypto](https://bit.ly/apk_nexgenCrypto)
+- Untuk Ios sedang proses upload, dikarenakan butuh update Xcode
 
 ## `Screenshoot`
 
