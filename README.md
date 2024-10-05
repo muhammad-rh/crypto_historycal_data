@@ -4,6 +4,7 @@
 
 - **Flutter**: 3.16.4
 - **JDK**: 19.0.2
+- **Platform**: Android & iOS
 
 ## `Link Download`
 
