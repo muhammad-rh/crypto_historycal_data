@@ -11,10 +11,10 @@
 
 ## `Screenshoot`
 
-- **Android**
+### Android
 ![screenshot](./assets/screenshoot/screenshot.png)
 
-- **Ios**
+### Ios
 ![screenshot_ios](./assets/screenshoot/screenshot_ios.png)
 
 ## `Dependencies`
