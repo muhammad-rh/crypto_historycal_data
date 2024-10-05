@@ -1,20 +1,25 @@
 # Dokumentasi Project
 
-## Versioning
+## `Versioning`
+
 - **Flutter**: 3.16.4
 - **JDK**: 19.0.2
 
-## Link Download APK
+## `Link Download APK`
+
 - [Unduh APK NexGen Crypto](https://bit.ly/apk_nexgenCrypto)
 
-## Dependencies
+## `Screenshoot`
+
+![screenshot](./assets/screenshoot/screenshot.png)
+
+## `Dependencies`
 
 - **google_fonts: 6.1.0**
   Menggunakan gfont sebagai font aplikasi.
 
 - **flutter_bloc: ^8.1.6**
   State Management.
-  
 - **equatable: ^2.0.5**
   Perbandingan objek.
 
@@ -33,8 +38,6 @@
 - **shimmer: ^3.0.0**
   Efek loading.
 
-================================================
-
 ## `HistorycalPage`
 
 ## Fitur Utama
@@ -49,11 +52,9 @@
 - **WidgetsBindingObserver**: Pengamat lifecycle aplikasi.
 - **Pencatatan**: Mencatat transisi status aplikasi untuk tujuan proses lanjut atau berhenti stream WebSocket.
 
-## WebSocket
+## `WebSocket`
 
 `HistorycalDatasource` mengatur koneksi WebSocket untuk berkomunikasi dengan server secara real-time.
-
-## Bagian Socket
 
 1. **Variabel:**
 
