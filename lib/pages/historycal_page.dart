@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:code_challenge/bloc/historycal_bloc.dart';
 import 'package:code_challenge/config/app_assets.dart';
@@ -322,8 +323,10 @@ class _HistorycalPageState extends State<HistorycalPage>
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                Container(
+                  padding: Platform.isIOS
+                      ? const EdgeInsets.symmetric(horizontal: 12)
+                      : null,
                   child: SfDataGrid(
                     source: data,
                     headerRowHeight: 36,
@@ -335,7 +338,7 @@ class _HistorycalPageState extends State<HistorycalPage>
                           columnName: ['Symbol', 'Last', 'Chg', 'Chg%'][i],
                           label: Container(
                             padding: EdgeInsets.fromLTRB(
-                                i == 0 ? 6 : 0, 0, i == 4 ? 6 : 0, 0),
+                                i == 0 ? 12 : 0, 0, i == 3 ? 12 : 0, 0),
                             alignment: i == 0
                                 ? Alignment.centerLeft
                                 : Alignment.centerRight,

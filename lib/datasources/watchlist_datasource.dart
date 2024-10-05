@@ -42,9 +42,9 @@ class WatchlistDatasource extends DataGridSource {
               ? Alignment.centerLeft
               : Alignment.centerRight,
           padding: EdgeInsets.fromLTRB(
-              dataGridCell.columnName == 'Symbol' ? 6 : 0,
+              dataGridCell.columnName == 'Symbol' ? 12 : 0,
               0,
-              dataGridCell.columnName == 'Chg%' ? 6 : 0,
+              dataGridCell.columnName == 'Chg%' ? 12 : 0,
               0),
           child: dataGridCell.columnName == 'Symbol'
               ? Row(
