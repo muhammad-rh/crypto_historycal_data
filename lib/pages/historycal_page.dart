@@ -322,31 +322,35 @@ class _HistorycalPageState extends State<HistorycalPage>
                     ),
                   ),
                 ),
-                SfDataGrid(
-                  source: data,
-                  headerRowHeight: 36,
-                  rowHeight: 38,
-                  shrinkWrapRows: true,
-                  columns: [
-                    for (int i = 0; i < 4; i++)
-                      GridColumn(
-                        columnName: ['Symbol', 'Last', 'Chg', 'Chg%'][i],
-                        label: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          alignment: i == 0
-                              ? Alignment.centerLeft
-                              : Alignment.centerRight,
-                          child: Text(
-                            ['Symbol', 'Last', 'Chg', 'Chg%'][i],
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: AppColors.grey,
-                              fontSize: 13,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: SfDataGrid(
+                    source: data,
+                    headerRowHeight: 36,
+                    rowHeight: 38,
+                    shrinkWrapRows: true,
+                    columns: [
+                      for (int i = 0; i < 4; i++)
+                        GridColumn(
+                          columnName: ['Symbol', 'Last', 'Chg', 'Chg%'][i],
+                          label: Container(
+                            padding: EdgeInsets.fromLTRB(
+                                i == 0 ? 6 : 0, 0, i == 4 ? 6 : 0, 0),
+                            alignment: i == 0
+                                ? Alignment.centerLeft
+                                : Alignment.centerRight,
+                            child: Text(
+                              ['Symbol', 'Last', 'Chg', 'Chg%'][i],
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                color: AppColors.grey,
+                                fontSize: 13,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),
