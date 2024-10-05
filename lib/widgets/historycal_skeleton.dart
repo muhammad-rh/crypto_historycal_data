@@ -21,20 +21,19 @@ class HistorycalSkeleton extends StatelessWidget {
             ),
             padding: const EdgeInsets.all(12),
             margin: const EdgeInsets.all(12),
-            width: MediaQuery.of(context).size.width,
             height: 400,
           ),
-          Container(
-            decoration: const BoxDecoration(
-              color: AppColors.black700,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(15),
-                topRight: Radius.circular(15),
+          Expanded(
+            child: Container(
+              decoration: const BoxDecoration(
+                color: AppColors.black700,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(15),
+                  topRight: Radius.circular(15),
+                ),
               ),
+              margin: const EdgeInsets.only(top: 12),
             ),
-            margin: const EdgeInsets.only(top: 12),
-            width: MediaQuery.of(context).size.width,
-            height: 400,
           ),
         ],
       ),
